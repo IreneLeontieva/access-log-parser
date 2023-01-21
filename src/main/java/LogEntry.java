@@ -17,7 +17,7 @@ public class LogEntry {
     private final int responseCode;
     private final int responseSize;
     private final String referer;
-    private final String userAgent;
+    private final UserAgent userAgent;
 
     private final String user;
 
@@ -44,7 +44,7 @@ public class LogEntry {
         responseCode = Integer.parseInt(matcher.group("status"));
         responseSize = Integer.parseInt(matcher.group("bodybytesent"));
         referer = matcher.group("httpreferer");
-        userAgent = getUserAgentFromLogLine(matcher.group("useragent"));
+        userAgent = new UserAgent(matcher.group("useragent"));
 
     }
 
@@ -80,41 +80,8 @@ public class LogEntry {
         return user;
     }
 
-    public String getUserAgent() {
+    public UserAgent getUserAgent() {
         return userAgent;
-    }
-
-    private String getUserAgentFromLogLine(String userAgent) {
-        if (userAgent == null) {
-            return "";
-        }
-
-        if (patternAgent == null) {
-            patternAgent = Pattern.compile(Constant.REGEXAGENT);
-        }
-        Matcher matcher = patternAgent.matcher(userAgent);
-
-        String result = "";
-
-        int count = 0;
-        while (matcher.find()) {
-            ++count;
-            String group2 = matcher.group(2);
-            if (group2 == null) {
-                continue;
-            }
-            String[] agent = matcher.group(2).split(";");
-            if (agent.length < 2)
-                continue;
-            String[] agent2 = agent[1].split("/");
-            if (agent2.length < 2)
-                continue;
-            if (agent2[0].trim() != "") {
-                result = agent2[0].trim();
-            }
-
-        }
-        return result;
     }
 
     @Override

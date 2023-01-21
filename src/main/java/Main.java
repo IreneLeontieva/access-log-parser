@@ -25,6 +25,7 @@ public class Main {
         ArrayList<LogEntry> logEntries = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            Statistics statistics = new Statistics();
             while ((line = reader.readLine()) != null) {
                 int length = line.length();
                 if (length > 1024) {
@@ -32,14 +33,17 @@ public class Main {
                 }
                 LogEntry logEntry = new LogEntry(line);
                 logEntries.add(logEntry);
-                if (logEntry.getUserAgent().equalsIgnoreCase("YandexBot"))
+                statistics.addEntry(logEntry);
+
+                if (logEntry.getUserAgent().getBotName().equalsIgnoreCase("YandexBot"))
                     yandexBot++;
-                if (logEntry.getUserAgent().equalsIgnoreCase("Googlebot"))
+                if (logEntry.getUserAgent().getBotName().equalsIgnoreCase("Googlebot"))
                     googleBot++;
 
             }
             System.out.println(String.format("Доля яндексБот %f", (double) yandexBot / (double) logEntries.size()));
             System.out.println(String.format("Доля гуглБот %f", (double) googleBot / (double) logEntries.size()));
+            System.out.println("Средний объём трафика сайта за час: " + statistics.getTrafficRate());
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }
