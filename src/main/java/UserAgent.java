@@ -35,7 +35,6 @@ public class UserAgent {
                 browser1 = "Opera";
             else if (a.contains("Edg")) browser1 = "Edge";
             else if (a.contains("IEMobile")) browser1 = "Internet Explorer";
-            else browser1 = "UNDEFINED";
 
             String group2 = matcher.group(2);
             if (group2 == null) {
@@ -61,7 +60,6 @@ public class UserAgent {
                     arrContains(agent, "iPhone")) &&
                     (arrContains(agent, "Mobile")))
                 operatingSystem1 = "iOS";
-            else operatingSystem1 = "UNDEFINED";
         }
         browser = browser1;
         operatingSystem = operatingSystem1;
