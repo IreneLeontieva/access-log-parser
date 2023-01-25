@@ -41,9 +41,12 @@ public class Main {
                     googleBot++;
 
             }
+
             System.out.println(String.format("Доля яндексБот %f", (double) yandexBot / (double) logEntries.size()));
             System.out.println(String.format("Доля гуглБот %f", (double) googleBot / (double) logEntries.size()));
             System.out.println("Средний объём трафика сайта за час: " + statistics.getTrafficRate());
+            System.out.println(statistics.osStat());
+            System.out.println(statistics.getAllUrl());
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }

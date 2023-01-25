@@ -9,8 +9,8 @@ public class UserAgent {
     private static Pattern patternAgent = null;
 
     public UserAgent(String userAgent) {
-        String browser1 = "";
-        String operatingSystem1 = "";
+        String browser1 = "UNDEFINED";
+        String operatingSystem1 = "UNDEFINED";
         String botName1 = "";
         if (userAgent == null) {
             browser = browser1;
