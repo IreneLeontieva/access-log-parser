@@ -2,6 +2,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.stream.Stream;
 
 public class Statistics {
 
@@ -17,14 +18,22 @@ public class Statistics {
 
     HashMap<String, Integer> browser;
 
+    private double amountVisit;
+
+    private double errorResponseCount;
+
+    HashMap<String, Integer> realUsers;
+
     public Statistics() {
         oS = new HashMap<>();
         browser = new HashMap<>();
         allUrl = new HashSet<>();
         notFoundUrl = new HashSet<>();
+        realUsers = new HashMap<>();
         totalTraffic = 0;
         minTime = LocalDateTime.MAX;
         maxTime = LocalDateTime.MIN;
+        amountVisit = 0;
     }
 
     public void addEntry(LogEntry logEntry) {
@@ -47,6 +56,17 @@ public class Statistics {
             browser.put(logEntry.getUserAgent().getBrowser(), browser.get(logEntry.getUserAgent().getBrowser()) + 1);
         } else {
             browser.put(logEntry.getUserAgent().getBrowser(), 1);
+        }
+        if (!logEntry.getUserAgent().isBot()) {
+            amountVisit++;
+        }
+        if ((Integer.toString(logEntry.getResponseCode()).startsWith("4") || Integer.toString(logEntry.getResponseCode()).startsWith("5")) && logEntry.getPath() != null) {
+            errorResponseCount++;
+        }
+        if (!logEntry.getUserAgent().isBot() && realUsers.containsKey(logEntry.getIpAddr()) && logEntry.getIpAddr() != null) {
+            realUsers.put(logEntry.getIpAddr(), realUsers.get(logEntry.getIpAddr()) + 1);
+        } else if (!logEntry.getUserAgent().isBot() && !realUsers.containsKey(logEntry.getIpAddr()) && logEntry.getIpAddr() != null) {
+            realUsers.put(logEntry.getIpAddr(), 1);
         }
     }
 
@@ -85,6 +105,25 @@ public class Statistics {
             hashMap.put(string, browser.get(string) / size);
         }
         return hashMap;
+    }
+
+    public double statVisit() {
+        long hours = ChronoUnit.HOURS.between(minTime, maxTime);
+        return hours / amountVisit;
+    }
+
+    public double statErrorCode() {
+        long hours = ChronoUnit.HOURS.between(minTime, maxTime);
+        return hours / errorResponseCount;
+    }
+
+    public double statVisitUniqueUser() {
+        int mapSize = realUsers.size();
+        int kolvoPosech = 0;
+        for (int kolvo : realUsers.values()) {
+            kolvoPosech += kolvo;
+        }
+        return kolvoPosech / mapSize;
     }
 
 }

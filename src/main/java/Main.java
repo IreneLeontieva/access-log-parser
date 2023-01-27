@@ -49,6 +49,10 @@ public class Main {
 //            System.out.println(statistics.getAllUrl());
             System.out.println(statistics.browserStat());
 //            System.out.println(statistics.getNotFoundUrl());
+
+            System.out.println(String.format("Среднее количество посещений сайта за час %f", statistics.statVisit()));
+            System.out.println(String.format("Среднее количество ошибочных запросов за час %f", statistics.statErrorCode()));
+            System.out.println(String.format("Средняя посещаемость одним пользователем за час %f", statistics.statVisitUniqueUser()));
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }

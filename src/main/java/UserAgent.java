@@ -8,6 +8,8 @@ public class UserAgent {
     private final String botName;
     private static Pattern patternAgent = null;
 
+    private boolean isBot;
+
     public UserAgent(String userAgent) {
         String browser1 = "UNDEFINED";
         String operatingSystem1 = "UNDEFINED";
@@ -17,6 +19,10 @@ public class UserAgent {
             operatingSystem = operatingSystem1;
             botName = botName1;
             return;
+        }
+
+        if (userAgent.contains("bot")){
+            isBot=true;
         }
 
         if (patternAgent == null) {
@@ -84,5 +90,9 @@ public class UserAgent {
 
     public String getBotName() {
         return botName;
+    }
+
+    public boolean isBot() {
+        return isBot;
     }
 }
