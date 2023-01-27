@@ -53,6 +53,13 @@ public class Main {
             System.out.println(String.format("Среднее количество посещений сайта за час %f", statistics.statVisit()));
             System.out.println(String.format("Среднее количество ошибочных запросов за час %f", statistics.statErrorCode()));
             System.out.println(String.format("Средняя посещаемость одним пользователем за час %f", statistics.statVisitUniqueUser()));
+
+            System.out.println(String.format("Самая пиковая посещаемости сайта  %d", statistics.maxPickAttendanceCount()));
+            System.out.println(String.format("Максимальная посещаемость одним пользователем  %d", statistics.maxRealPeopleAttendanceCount()));
+
+
+            System.out.println(String.format("Все имеющиеся реферы %s", statistics.getRefer()));
+
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }

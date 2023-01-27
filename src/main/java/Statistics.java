@@ -1,8 +1,8 @@
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Stream;
 
 public class Statistics {
 
@@ -24,12 +24,18 @@ public class Statistics {
 
     HashMap<String, Integer> realUsers;
 
+    private HashMap<Integer, Integer> pickAttendanceCount;
+
+    HashSet<String> refer;
+
     public Statistics() {
         oS = new HashMap<>();
         browser = new HashMap<>();
         allUrl = new HashSet<>();
         notFoundUrl = new HashSet<>();
         realUsers = new HashMap<>();
+        refer = new HashSet<>();
+        pickAttendanceCount = new HashMap<>();
         totalTraffic = 0;
         minTime = LocalDateTime.MAX;
         maxTime = LocalDateTime.MIN;
@@ -59,15 +65,35 @@ public class Statistics {
         }
         if (!logEntry.getUserAgent().isBot()) {
             amountVisit++;
+            if (logEntry.getIpAddr() != null) {
+                if (realUsers.containsKey(logEntry.getIpAddr())) {
+                    realUsers.put(logEntry.getIpAddr(), realUsers.get(logEntry.getIpAddr()) + 1);
+                } else {
+                    realUsers.put(logEntry.getIpAddr(), 1);
+                }
+                int second = (int) ChronoUnit.SECONDS.between(minTime, logEntry.getRequestDateTime());
+                if (pickAttendanceCount.containsKey(second)) {
+                    pickAttendanceCount.put(second, pickAttendanceCount.get(second) + 1);
+                } else {
+                    pickAttendanceCount.put(second, 1);
+                }
+            }
         }
         if ((Integer.toString(logEntry.getResponseCode()).startsWith("4") || Integer.toString(logEntry.getResponseCode()).startsWith("5")) && logEntry.getPath() != null) {
             errorResponseCount++;
         }
-        if (!logEntry.getUserAgent().isBot() && realUsers.containsKey(logEntry.getIpAddr()) && logEntry.getIpAddr() != null) {
-            realUsers.put(logEntry.getIpAddr(), realUsers.get(logEntry.getIpAddr()) + 1);
-        } else if (!logEntry.getUserAgent().isBot() && !realUsers.containsKey(logEntry.getIpAddr()) && logEntry.getIpAddr() != null) {
-            realUsers.put(logEntry.getIpAddr(), 1);
-        }
+        if (logEntry.getReferer() != null && !logEntry.getReferer().equals("-"))
+            do {
+                int beginIndex = logEntry.getReferer().indexOf("/") + 2;
+                int endIndex = logEntry.getReferer().indexOf("/", beginIndex);
+                if (beginIndex == -1 || endIndex == -1)
+                    break;
+                refer.add(logEntry.getReferer().substring(beginIndex, endIndex));
+            } while (false);
+    }
+
+    public HashSet<String> getRefer() {
+        return refer;
     }
 
     public long getTrafficRate() {
@@ -126,4 +152,11 @@ public class Statistics {
         return kolvoPosech / mapSize;
     }
 
+    public int maxPickAttendanceCount() {
+        return pickAttendanceCount.values().stream().max(Comparator.naturalOrder()).get();
+    }
+
+    public int maxRealPeopleAttendanceCount() {
+        return realUsers.values().stream().max(Comparator.naturalOrder()).get();
+    }
 }
